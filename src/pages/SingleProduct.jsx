@@ -11,14 +11,20 @@ const SingleProduct = () => {
   // console.log(params);
   const { addToCart } = useCart();
   // const [productQty ,setProductQty] = useState(1)
-  const [singleProduct, setSingleProduct] = useState({});
+  // const [singleProduct, setSingleProduct] = useState({});
+  const [singleProduct, setSingleProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const id = params.id;
+  useEffect(() => {
+    setQuantity(1);
+  }, [id]);
 
   const getSingleProductData = async () => {
     try {
       const res = await fetchSingleProduct(id);
       //   console.log(res.data.product);
-      const product = res.data.product;
+      // const product = res.data.product;
+      const product = res.data;
       setSingleProduct(product);
       console.log(product);
     } catch (error) {
@@ -29,11 +35,12 @@ const SingleProduct = () => {
     getSingleProductData();
   }, []);
 
-  const originalPrice = Number(
-    Math.round(
-      singleProduct.price + singleProduct.price * (singleProduct.discount / 100)
-    )
-  );
+  const originalPrice = singleProduct?.discount
+    ? Math.round(
+        singleProduct.price +
+          singleProduct.price * (singleProduct.discount / 100)
+      )
+    : singleProduct?.price;
 
   return (
     <>
@@ -88,7 +95,8 @@ const SingleProduct = () => {
                   type="number"
                   name="quantity"
                   min={1}
-                  value={1}
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
                   id="quantity"
                   className="px-3 py-1  border border-gray-300 w-20 rounded-lg focus:outline-2 focus:outline-red-500"
                 />
@@ -97,7 +105,7 @@ const SingleProduct = () => {
               {/* add to cart button  */}
               <div className="flex items-center gap-4 mt-4">
                 <button
-                  onClick={() => addToCart(singleProduct)}
+                  onClick={() => addToCart(singleProduct, quantity)}
                   className="bg-red-500 text-lg text-white px-6 py-2 cursor-pointer rounded-md flex gap-2 items-center justify-center font-semibold"
                 >
                   <IoCartOutline className="w-6 h-6" /> Add to Cart

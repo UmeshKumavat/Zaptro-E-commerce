@@ -10,25 +10,28 @@ const CategoryProduct = () => {
   const navigate = useNavigate();
   const params = useParams();
   const productCategory = params.category;
-  //   console.log(productCategory);
+    console.log(productCategory);
 
   const getCategoryWiseProducts = async () => {
     try {
       const res = await fetchCategoryWiseProducts(productCategory);
       //   console.log(res.data.products);
-      const data = res.data.products;
+      const data = res?.data?.products || [];
       setCategorizedProducts(data);
     } catch (error) {
       console.log(error);
+      setCategorizedProducts([])
     }
   };
   useEffect(() => {
-    getCategoryWiseProducts();
+    if (productCategory) {
+      getCategoryWiseProducts();
+    }
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, []);
+  }, [productCategory]);
 
   return (
     <div>
